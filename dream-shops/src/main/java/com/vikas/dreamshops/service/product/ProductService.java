@@ -32,6 +32,8 @@ public class ProductService implements IProductService {
 	public Product addProduct(ProductRequest productRequest) {
 		// TODO Auto-generated method stub
 		
+		logger.info("Inside ProductService -> addProduct {} ", productRequest);
+		
 		Category category = Optional.ofNullable(categoryRepository.findByName(productRequest.getCategory().getName()))
 				.orElseGet(() -> {
 					Category newCategory = new Category(productRequest.getCategory().getName());
@@ -44,6 +46,9 @@ public class ProductService implements IProductService {
 	}
 	
 	private Product createProduct(ProductRequest productRequest, Category category) {
+		
+		logger.info("Inside ProductService -> createProduct {} ", productRequest, category);		
+		
 		return new Product(
 				productRequest.getName(),
 				productRequest.getBrand(),
@@ -59,6 +64,7 @@ public class ProductService implements IProductService {
 		// TODO Auto-generated method stub
 		
 		logger.info("Inside ProductService -> getProductById {} ", id);
+		
 		return productRepository.findById(id)
 				.orElseThrow(() -> new ProductNotFoundException("Product not found!")); 
 	}
@@ -76,6 +82,9 @@ public class ProductService implements IProductService {
 	@Override
 	public Product updateProductById(ProductRequest productRequest, Long productId) {
 		// TODO Auto-generated method stub
+		
+		logger.info("Inside ProductService -> deleteProductById {} ", productRequest, productId);
+		
 		return productRepository.findById(productId)
 				.map(existingProduct -> updateExistingProduct(existingProduct, productRequest))
 				.map(productRepository::save)
@@ -84,6 +93,9 @@ public class ProductService implements IProductService {
 	}
 	
 	private Product updateExistingProduct(Product existingProduct, ProductRequest productRequest) {
+		
+		logger.info("Inside ProductService -> deleteProductById {} ", productRequest, existingProduct);
+		
 		existingProduct.setBrand(productRequest.getBrand());
 		existingProduct.setCategory(productRequest.getCategory());
 		existingProduct.setName(productRequest.getName());
