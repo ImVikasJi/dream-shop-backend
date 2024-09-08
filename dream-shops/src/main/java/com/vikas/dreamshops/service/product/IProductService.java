@@ -2,22 +2,23 @@ package com.vikas.dreamshops.service.product;
 
 import java.util.List;
 
+import com.vikas.dreamshops.dtos.ProductRequest;
 import com.vikas.dreamshops.model.Product;
 
 public interface IProductService {
 
-	Product addProduct(Product product);
+	Product addProduct(ProductRequest product);
 
 	Product getProductById(Long id);
 	void deleteProductById(Long id);
-	void updateProductById(Product product,Long productId);
+	Product updateProductById(ProductRequest product,Long productId);
 	
 	List<Product> getAllProducts();
-	List<Product> getAllProductsByCategory(String category);
-	List<Product> getAllProductsByBrand(String brand);
-	List<Product> getAllProductsByBrandAndCategory(String brand,String category);
-	List<Product> getAllProductsByName(String name);	
-	List<Product> getAllProductsByBrandAndName(String brand,String name);	
+	List<Product> getProductsByCategory(String category);
+	List<Product> getProductsByBrand(String brand);
+	List<Product> getProductsByBrandAndCategory(String brand,String category);
+	List<Product> getProductsByName(String name);	
+	List<Product> getProductsByBrandAndName(String brand,String name);	
 	
 	Long countProductsByBrandAndName(String brand,String name);
 }
