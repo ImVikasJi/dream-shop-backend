@@ -60,7 +60,7 @@ public class ProductService implements IProductService {
 		
 		logger.info("Inside ProductService -> getProductById {} ", id);
 		return productRepository.findById(id)
-				.orElseThrow(() -> new ProductNotFoundException("Product not found!"));
+				.orElseThrow(() -> new ProductNotFoundException("Product not found!")); 
 	}
 
 	@Override
