@@ -33,6 +33,8 @@ public class ProductService implements IProductService {
 		// TODO Auto-generated method stub
 		
 		logger.info("Inside ProductService -> addProduct {} ", productRequest);
+
+
 		
 		Category category = Optional.ofNullable(categoryRepository.findByName(productRequest.getCategory().getName()))
 				.orElseGet(() -> {

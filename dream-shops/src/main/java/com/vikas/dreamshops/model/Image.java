@@ -36,4 +36,6 @@ public class Image {
 	@ManyToOne
 	@JoinColumn(name="product_id")
 	private Product product;
+	
+	
 }
