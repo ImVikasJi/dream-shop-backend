@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.vikas.dreamshops.dtos.ProductRequest;
-import com.vikas.dreamshops.exceptions.ProductNotFoundException;
+import com.vikas.dreamshops.exceptions.ResourceNotFoundException;
 import com.vikas.dreamshops.model.Category;
 import com.vikas.dreamshops.model.Product;
 import com.vikas.dreamshops.repository.CategoryRepository;
@@ -68,7 +68,7 @@ public class ProductService implements IProductService {
 		logger.info("Inside ProductService -> getProductById {} ", id);
 		
 		return productRepository.findById(id)
-				.orElseThrow(() -> new ProductNotFoundException("Product not found!")); 
+				.orElseThrow(() -> new ResourceNotFoundException("Product not found!")); 
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class ProductService implements IProductService {
 		logger.info("Inside ProductService -> deleteProductById {} ", id);
 		productRepository.findById(id)
 		.ifPresentOrElse(productRepository::delete,
-				() -> new ProductNotFoundException("Product not found!"));
+				() -> new ResourceNotFoundException("Product not found!"));
 		
 	}
 
@@ -90,7 +90,7 @@ public class ProductService implements IProductService {
 		return productRepository.findById(productId)
 				.map(existingProduct -> updateExistingProduct(existingProduct, productRequest))
 				.map(productRepository::save)
-				.orElseThrow(() -> new ProductNotFoundException("Product Not found! "));
+				.orElseThrow(() -> new ResourceNotFoundException("Product Not found! "));
 		
 	}
 	
