@@ -35,9 +35,6 @@ public class ImageService implements IImageService {
 	private ImageRepository imageRepository;
 	
 	@Autowired
-	private ProductRepository productRepository;
-	
-	@Autowired
 	private ProductService productService;
 	
 	@Override

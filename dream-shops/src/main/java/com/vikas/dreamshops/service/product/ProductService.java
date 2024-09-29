@@ -135,7 +135,7 @@ public class ProductService implements IProductService {
 	public List<Product> getProductsByBrandAndCategory(String brand, String category) {
 		// TODO Auto-generated method stub
 		logger.info("Inside ProductService -> getProductsByBrandAndCategory {} ", brand,category);
-		return productRepository.findByBrandNameAndCategory(brand, category);
+		return productRepository.findByCategoryNameAndBrand(category,brand);
 	}
 
 	@Override
