@@ -30,76 +30,70 @@ import com.vikas.dreamshops.service.image.IImageService;
 @RestController
 @RequestMapping("${api.prefix}/images")
 public class ImageController {
-	
+
 	@Autowired
 	private IImageService iImageService;
-	
-	
+
 	@PostMapping("/upload")
-	public ResponseEntity<ApiResponse> saveImages(
-			@RequestParam List<MultipartFile> files,
-			@RequestParam Long productId){
-		
-				try {
-					List<ImageDto> imageDtos = iImageService.saveImage(files, productId);
-					return ResponseEntity.ok(new ApiResponse("Uploaded successfully", imageDtos));
-				} catch (Exception e) {
-					// TODO: handle exception
-					return ResponseEntity.internalServerError().body(new ApiResponse("Upload failed! ", e.getMessage()));
-				}
+	public ResponseEntity<ApiResponse> saveImages(@RequestParam List<MultipartFile> files,
+			@RequestParam Long productId) {
+
+		try {
+			List<ImageDto> imageDtos = iImageService.saveImage(files, productId);
+			return ResponseEntity.ok(new ApiResponse("Uploaded successfully", imageDtos));
+		} catch (Exception e) {
+			// TODO: handle exception
+			return ResponseEntity.internalServerError().body(new ApiResponse("Upload failed! ", e.getMessage()));
+		}
 	}
-	
+
 	@GetMapping("/image/download/{imageId}")
-	public ResponseEntity<Resource> dowloadImage(
-			@PathVariable Long imageId			
-			) throws SQLException{
+	public ResponseEntity<Resource> dowloadImage(@PathVariable Long imageId) throws SQLException {
 		Image image = iImageService.getImageById(imageId);
-		
-			ByteArrayResource resource = new ByteArrayResource(image.getImage().getBytes(1,(int)image.getImage().length()));
-			return ResponseEntity.ok().contentType(MediaType.parseMediaType(image.getFileType()))
-					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
-					.body(resource);		
+
+		ByteArrayResource resource = new ByteArrayResource(
+				image.getImage().getBytes(1, (int) image.getImage().length()));
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType(image.getFileType()))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
+				.body(resource);
 	}
-	
+
 	@PutMapping("image/{imageId}/update")
-	public ResponseEntity<ApiResponse> updateImage(
-			@PathVariable Long imageId, 
-			@RequestBody MultipartFile file){
-		
+	public ResponseEntity<ApiResponse> updateImage(@PathVariable Long imageId, @RequestBody MultipartFile file) {
+
 		Image image = iImageService.getImageById(imageId);
-		
+
 		try {
 			if (image != null) {
 				iImageService.updateImage(file, imageId);
 				return ResponseEntity.ok(new ApiResponse("Update success! ", null));
-			} 
+			}
 		} catch (ResourceNotFoundException e) {
 			// TODO: handle exception
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
 		}
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Update failed! ",HttpStatus.INTERNAL_SERVER_ERROR));
-						
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(new ApiResponse("Update failed! ", HttpStatus.INTERNAL_SERVER_ERROR));
+
 	}
-	
+
 	@DeleteMapping("image/{imageId}/delete")
-	public ResponseEntity<ApiResponse> deleteImage(
-			@PathVariable Long imageId){
-		
+	public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId) {
+
 		Image image = iImageService.getImageById(imageId);
-		
+
 		try {
 			if (image != null) {
 				iImageService.deleteImageById(imageId);
 				return ResponseEntity.ok(new ApiResponse("Deleted successfully! ", null));
-			} 
+			}
 		} catch (ResourceNotFoundException e) {
 			// TODO: handle exception
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(),null));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
 		}
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Delete failed! ",HttpStatus.INTERNAL_SERVER_ERROR));
-						
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(new ApiResponse("Delete failed! ", HttpStatus.INTERNAL_SERVER_ERROR));
+
 	}
-	
-	
 
 }

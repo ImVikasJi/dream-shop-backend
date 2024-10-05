@@ -1,9 +1,6 @@
 package com.vikas.dreamshops.model;
 
 import java.sql.Blob;
-import java.sql.Timestamp;
-
-import com.vikas.dreamshops.dtos.ProductDto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,21 +20,20 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 public class Image {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String fileName;
 	private String fileType;
-	
+
 	@Lob
 	private Blob image;
 	private String downloadUrl;
-	
+
 //	private Timestamp downloadTime;
 	@ManyToOne
-	@JoinColumn(name="product_id")
+	@JoinColumn(name = "product_id")
 	private Product product;
-	
-	
+
 }

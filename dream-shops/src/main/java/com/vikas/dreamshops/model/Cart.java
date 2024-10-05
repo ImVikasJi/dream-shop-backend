@@ -1,7 +1,7 @@
 package com.vikas.dreamshops.model;
 
 import java.math.BigDecimal;
-import java.sql.Blob;
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -26,8 +26,30 @@ public class Cart {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private BigDecimal totalAmount = BigDecimal.ZERO;
+
+	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<CartItem> items = new HashSet<CartItem>();
 	
-	@OneToMany(mappedBy = "cart",cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<CartItem> cartItems;
-	
+	 public void addItem(CartItem item) {
+	        this.items.add(item);
+	        item.setCart(this);
+	        updateTotalAmount();
+	    }
+
+	    public void removeItem(CartItem item) {
+	        this.items.remove(item);
+	        item.setCart(null);
+	        updateTotalAmount();
+	    }
+
+	    private void updateTotalAmount() {
+	        this.totalAmount = items.stream().map(item -> {
+	            BigDecimal unitPrice = item.getUnitPrice();
+	            if (unitPrice == null) {
+	                return  BigDecimal.ZERO;
+	            }
+	            return unitPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
+	        }).reduce(BigDecimal.ZERO, BigDecimal::add);
+	    }
+
 }

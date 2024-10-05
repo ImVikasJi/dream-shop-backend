@@ -24,78 +24,77 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("${api.prefix}/categories")
 public class CategoryController {
-	
+
 	@Autowired
 	private ICategoryService iCategoryService;
-	
+
 	@GetMapping("/all")
-	public ResponseEntity<ApiResponse> getAllCategories(){
+	public ResponseEntity<ApiResponse> getAllCategories() {
 		try {
 			List<Category> categories = this.iCategoryService.getAllCategories();
-			return new ResponseEntity<ApiResponse>(new ApiResponse("", categories), HttpStatus.OK);
+			return new ResponseEntity<>(new ApiResponse("", categories), HttpStatus.OK);
 		} catch (Exception e) {
 			// TODO: handle exception
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Error ",HttpStatus.INTERNAL_SERVER_ERROR ));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(new ApiResponse("Error ", HttpStatus.INTERNAL_SERVER_ERROR));
 		}
 	}
-	
+
 	@PostMapping("/add")
-	public ResponseEntity<ApiResponse> addCategory(
-			@RequestBody Category name){
+	public ResponseEntity<ApiResponse> addCategory(@RequestBody Category name) {
 		try {
 			Category category = this.iCategoryService.addCategory(name);
 			return ResponseEntity.ok(new ApiResponse("Success", category));
 		} catch (AlreadyExistsException e) {
 			// TODO: handle exception
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(e.getMessage(),null ));
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(e.getMessage(), null));
 		}
 	}
-	
+
 	@GetMapping("/categoryId/{id}")
-	public ResponseEntity<ApiResponse> getCategoryById(
-			@PathVariable Long id){
+	public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long id) {
 		try {
 			Category categoryById = this.iCategoryService.getCategoryById(id);
 			return ResponseEntity.ok(new ApiResponse("Found ", categoryById));
 		} catch (ResourceNotFoundException e) {
 			// TODO: handle exception
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(),HttpStatus.NOT_FOUND ));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new ApiResponse(e.getMessage(), HttpStatus.NOT_FOUND));
 		}
 	}
-	
+
 	@GetMapping("/categoryName/{name}")
-	public ResponseEntity<ApiResponse> getCategoryByName(
-			@PathVariable String name){
+	public ResponseEntity<ApiResponse> getCategoryByName(@PathVariable String name) {
 		try {
 			Category categoryByName = this.iCategoryService.getCategoryByName(name);
 			return ResponseEntity.ok(new ApiResponse("Found ", categoryByName));
 		} catch (ResourceNotFoundException e) {
 			// TODO: handle exception
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(),HttpStatus.NOT_FOUND ));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new ApiResponse(e.getMessage(), HttpStatus.NOT_FOUND));
 		}
 	}
-	
+
 	@GetMapping("/categoryDelete/{id}")
-	public ResponseEntity<ApiResponse> deleteCategory(
-			@PathVariable Long id){
+	public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long id) {
 		try {
 			this.iCategoryService.deleteCategoryById(id);
 			return ResponseEntity.ok(new ApiResponse("Category deleted successfully ", null));
 		} catch (ResourceNotFoundException e) {
 			// TODO: handle exception
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(),HttpStatus.NOT_FOUND ));
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new ApiResponse(e.getMessage(), HttpStatus.NOT_FOUND));
 		}
 	}
-	
+
 	@PostMapping("/categoryUpdate/{id}")
-	public ResponseEntity<ApiResponse> updateCategory(
-			@RequestBody Category category, @PathVariable Long id){
+	public ResponseEntity<ApiResponse> updateCategory(@RequestBody Category category, @PathVariable Long id) {
 		try {
-			Category updatedCategory = this.iCategoryService.updateCategory(category,id);
+			Category updatedCategory = this.iCategoryService.updateCategory(category, id);
 			return ResponseEntity.ok(new ApiResponse("Success", updatedCategory));
 		} catch (AlreadyExistsException e) {
 			// TODO: handle exception
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(e.getMessage(),null ));
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(e.getMessage(), null));
 		}
 	}
 

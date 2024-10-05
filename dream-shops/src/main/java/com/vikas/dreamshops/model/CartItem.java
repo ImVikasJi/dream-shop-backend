@@ -1,7 +1,6 @@
 package com.vikas.dreamshops.model;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -28,15 +27,15 @@ public class CartItem {
 	private Long quantity;
 	private BigDecimal unitPrice;
 	private BigDecimal totalPrice;
-	
+
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "cart_id")
 	private Cart cart;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "product_id")
 	private Product product;
-	
+
 	public void setTotalPrice() {
 		this.totalPrice = this.unitPrice.multiply(new BigDecimal(quantity));
 	}

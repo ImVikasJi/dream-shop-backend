@@ -20,19 +20,17 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 public class Category {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
-	
+
 	@JsonIgnore
 	@OneToMany(mappedBy = "category")
 	private List<Product> products;
-	
-	
 
-	public Category( String name) {
+	public Category(String name) {
 		this.name = name;
 	}
 
@@ -59,7 +57,5 @@ public class Category {
 	public void setProducts(List<Product> products) {
 		this.products = products;
 	}
-	
-	
 
 }
