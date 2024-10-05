@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vikas.dreamshops.dtos.ProductDto;
 import com.vikas.dreamshops.dtos.ProductRequest;
 import com.vikas.dreamshops.exceptions.ResourceNotFoundException;
 import com.vikas.dreamshops.model.Product;
@@ -34,7 +35,7 @@ public class ProductController {
 	@GetMapping("/all")
 	public ResponseEntity<ApiResponse> getAllProducts(){
 		
-		List<Product> allProducts = this.iProductService.getAllProducts();
+		List<ProductDto> allProducts = this.iProductService.getAllProducts();
 		return ResponseEntity.ok(new ApiResponse("success", allProducts));
 	} 
 	
@@ -42,7 +43,7 @@ public class ProductController {
 	public ResponseEntity<ApiResponse> getProductById(@PathVariable Long productId){
 		
 		try {
-			Product productById = this.iProductService.getProductById(productId);
+			ProductDto productById = this.iProductService.getProductById(productId);
 			return ResponseEntity.ok(new ApiResponse("success", productById));
 		} catch (ResourceNotFoundException e) {
 			// TODO: handle exception
@@ -54,7 +55,7 @@ public class ProductController {
 	public ResponseEntity<ApiResponse> addProduct(
 			@RequestBody ProductRequest product){
 		try {
-			Product addedProduct = this.iProductService.addProduct(product);
+			ProductDto addedProduct = this.iProductService.addProduct(product);
 			return ResponseEntity.ok(new ApiResponse("Product added successfully! ", addedProduct));
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -67,7 +68,7 @@ public class ProductController {
 			@RequestBody ProductRequest productRequest,
 			@PathVariable Long productId){
 		try {
-			Product updatedProductById = this.iProductService.updateProductById(productRequest, productId);
+			ProductDto updatedProductById = this.iProductService.updateProductById(productRequest, productId);
 			return ResponseEntity.ok(new ApiResponse("Product updated successfully! ", updatedProductById));
 		} catch (ResourceNotFoundException e) {
 			// TODO: handle exception
@@ -93,7 +94,7 @@ public class ProductController {
 			@PathVariable String brandName,
 			@PathVariable String productName){
 		try {
-			List<Product> products= this.iProductService.getProductsByBrandAndName(brandName,
+			List<ProductDto> products= this.iProductService.getProductsByBrandAndName(brandName,
 					productName);
 			
 			if(products.isEmpty()) {
@@ -111,7 +112,7 @@ public class ProductController {
 			@PathVariable String brandName,
 			@PathVariable String categoryName){
 		try {
-			List<Product> products= this.iProductService.getProductsByBrandAndCategory(brandName,
+			List<ProductDto> products= this.iProductService.getProductsByBrandAndCategory(brandName,
 					categoryName);
 			
 			if(products.isEmpty()) {
@@ -129,7 +130,7 @@ public class ProductController {
 			@PathVariable String productName){
 		
 		try {
-			List<Product> productsByName = this.iProductService.getProductsByName(productName);
+			List<ProductDto> productsByName = this.iProductService.getProductsByName(productName);
 			if(productsByName.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("No product found!!" , null));
 			}
@@ -140,12 +141,12 @@ public class ProductController {
 		}
 	}
 	
-	@GetMapping("/by/brand/{brand}")
+	@GetMapping("/by-brand")
 	public ResponseEntity<ApiResponse> getProductsByBrand(
-			@PathVariable String brand){
+			@RequestParam String brand){
 		
 		try {
-			List<Product> brands = this.iProductService.getProductsByBrand(brand);
+			List<ProductDto> brands = this.iProductService.getProductsByBrand(brand);
 			if(brands.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("No product found!!" , null));
 			}
@@ -161,7 +162,7 @@ public class ProductController {
 			@PathVariable String category){
 		
 		try {
-			List<Product>  categories= this.iProductService.getProductsByCategory(category);
+			List<ProductDto>  categories= this.iProductService.getProductsByCategory(category);
 			if(categories.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("No product found!!" , null));
 			}

@@ -11,8 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ImageDto {
 
-	private Long imageId;
-	private String imageName;
-	private String downloadUrl;
+	private Long id;
+    private String fileName;
+    private String downloadUrl;
 
 }

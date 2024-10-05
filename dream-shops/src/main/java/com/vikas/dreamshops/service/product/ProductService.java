@@ -5,14 +5,19 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.vikas.dreamshops.dtos.ImageDto;
+import com.vikas.dreamshops.dtos.ProductDto;
 import com.vikas.dreamshops.dtos.ProductRequest;
 import com.vikas.dreamshops.exceptions.ResourceNotFoundException;
 import com.vikas.dreamshops.model.Category;
+import com.vikas.dreamshops.model.Image;
 import com.vikas.dreamshops.model.Product;
 import com.vikas.dreamshops.repository.CategoryRepository;
+import com.vikas.dreamshops.repository.ImageRepository;
 import com.vikas.dreamshops.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -27,9 +32,15 @@ public class ProductService implements IProductService {
 	
 	@Autowired
 	private CategoryRepository categoryRepository;
+	
+	@Autowired
+	private ImageRepository imageRepository;
 
+	@Autowired
+	private ModelMapper modelMapper;
+	
 	@Override
-	public Product addProduct(ProductRequest productRequest) {
+	public ProductDto addProduct(ProductRequest productRequest) {
 		// TODO Auto-generated method stub
 		
 		logger.info("Inside ProductService -> addProduct {} ", productRequest);
@@ -43,8 +54,10 @@ public class ProductService implements IProductService {
 				});
 		
 		productRequest.setCategory(category);
+		
+		ProductDto convertToDto = this.convertToDto(productRepository.save(createProduct(productRequest, category)));
 		 
-		return productRepository.save(createProduct(productRequest, category));
+		return convertToDto;
 	}
 	
 	private Product createProduct(ProductRequest productRequest, Category category) {
@@ -62,13 +75,17 @@ public class ProductService implements IProductService {
 	}
 
 	@Override
-	public Product getProductById(Long id) {
+	public ProductDto getProductById(Long id) {
 		// TODO Auto-generated method stub
 		
 		logger.info("Inside ProductService -> getProductById {} ", id);
 		
-		return productRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Product not found!")); 
+		Product product = productRepository.findById(id)
+		.orElseThrow(() -> new ResourceNotFoundException("Product not found!"));
+		
+		ProductDto productDto = this.convertToDto(product);
+		
+		return productDto ; 
 	}
 
 	@Override
@@ -82,15 +99,19 @@ public class ProductService implements IProductService {
 	}
 
 	@Override
-	public Product updateProductById(ProductRequest productRequest, Long productId) {
+	public ProductDto updateProductById(ProductRequest productRequest, Long productId) {
 		// TODO Auto-generated method stub
 		
 		logger.info("Inside ProductService -> deleteProductById {} ", productRequest, productId);
 		
-		return productRepository.findById(productId)
-				.map(existingProduct -> updateExistingProduct(existingProduct, productRequest))
-				.map(productRepository::save)
-				.orElseThrow(() -> new ResourceNotFoundException("Product Not found! "));
+		Product updatedProduct = productRepository.findById(productId)
+		.map(existingProduct -> updateExistingProduct(existingProduct, productRequest))
+		.map(productRepository::save)
+		.orElseThrow(() -> new ResourceNotFoundException("Product Not found! "));
+		
+		ProductDto convertToDto = this.convertToDto(updatedProduct);
+		
+		return convertToDto;
 		
 	}
 	
@@ -111,45 +132,53 @@ public class ProductService implements IProductService {
 	}
 
 	@Override
-	public List<Product> getAllProducts() {
+	public List<ProductDto> getAllProducts() {
 		// TODO Auto-generated method stub
 		logger.info("Inside ProductService -> getAllProducts {} ");
-		return productRepository.findAll();
+		
+		List<ProductDto> convertedProducts = this.getConvertedProducts(productRepository.findAll());
+		return convertedProducts;
 	}
 
 	@Override
-	public List<Product> getProductsByCategory(String category) {
+	public List<ProductDto> getProductsByCategory(String category) {
 		// TODO Auto-generated method stub
 		logger.info("Inside ProductService -> getProductsByCategory {} ", category);
-		return productRepository.findByCategoryName(category);
+		
+		List<ProductDto> convertedProducts = this.getConvertedProducts(productRepository.findByCategoryName(category));
+		return convertedProducts;
 	}
 
 	@Override
-	public List<Product> getProductsByBrand(String brand) {
+	public List<ProductDto> getProductsByBrand(String brand) {
 		// TODO Auto-generated method stub
 		logger.info("Inside ProductService -> getProductsByBrand {} ", brand);
-		return productRepository.findByBrand(brand);
+		List<ProductDto> convertedProducts = this.getConvertedProducts(productRepository.findByBrand(brand));
+		return convertedProducts;
 	}
 
 	@Override
-	public List<Product> getProductsByBrandAndCategory(String brand, String category) {
+	public List<ProductDto> getProductsByBrandAndCategory(String brand, String category) {
 		// TODO Auto-generated method stub
 		logger.info("Inside ProductService -> getProductsByBrandAndCategory {} ", brand,category);
-		return productRepository.findByCategoryNameAndBrand(category,brand);
+		List<ProductDto> convertedProducts = this.getConvertedProducts(productRepository.findByCategoryNameAndBrand(category,brand));
+		return convertedProducts;
 	}
 
 	@Override
-	public List<Product> getProductsByName(String name) {
+	public List<ProductDto> getProductsByName(String name) {
 		// TODO Auto-generated method stub
 		logger.info("Inside ProductService -> getProductsByName {} ", name);
-		return productRepository.findByName(name);
+		List<ProductDto> convertedProducts = this.getConvertedProducts(productRepository.findByName(name));
+		return convertedProducts;
 	}
 
 	@Override
-	public List<Product> getProductsByBrandAndName(String brand, String name) {
+	public List<ProductDto> getProductsByBrandAndName(String brand, String name) {
 		// TODO Auto-generated method stub
 		logger.info("Inside ProductService -> getProductsByBrandAndName {} ",brand, name);
-		return productRepository.findByBrandAndName(brand,name);
+		List<ProductDto> byBrandAndName = this.getConvertedProducts(productRepository.findByBrandAndName(brand,name));
+		return byBrandAndName;
 	}
 
 	@Override
@@ -159,6 +188,21 @@ public class ProductService implements IProductService {
 		return productRepository.countByBrandAndName(brand, name);
 	}
 
+	public ProductDto convertToDto(Product product) {
+		ProductDto productDto = modelMapper.map(product, ProductDto.class);
+		List<Image> images = imageRepository.findByProductId(product.getId());
+		List<ImageDto> imageDtos = images.stream()
+				.map(image -> modelMapper.map(image, ImageDto.class)).toList();
+		
+		productDto.setImageDtos(imageDtos);
+		
+		return productDto;
+	}
+	
+	
+	public List<ProductDto> getConvertedProducts(List<Product> products){
+		return products.stream().map(this::convertToDto).toList();
+	}
 	
 
 }

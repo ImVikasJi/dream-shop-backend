@@ -3,6 +3,8 @@ package com.vikas.dreamshops.model;
 import java.sql.Blob;
 import java.sql.Timestamp;
 
+import com.vikas.dreamshops.dtos.ProductDto;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
