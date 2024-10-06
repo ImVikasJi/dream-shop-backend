@@ -50,6 +50,10 @@ public class CartItemService implements ICartItemService{
 		// If yes, increase the quantity with the requested quantity
 		// If no, initiate new cart item entry
 		
+		if(cartId == null) {
+			cartId = ((CartService) iCartService).initializeNewCart();
+		}
+		
 		CartDto cartDto = this.iCartService.getCart(cartId);
 		Cart cart = this.modelMapper.map(cartDto, Cart.class);
 		

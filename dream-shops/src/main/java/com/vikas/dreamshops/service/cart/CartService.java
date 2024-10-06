@@ -2,11 +2,13 @@ package com.vikas.dreamshops.service.cart;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import com.vikas.dreamshops.dtos.CartDto;
@@ -29,6 +31,8 @@ public class CartService implements ICartService{
 	
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	private final AtomicLong cartIdGenerator = new AtomicLong(0);
 
 	@Override
 	public CartDto getCart(Long id) {
@@ -71,6 +75,14 @@ public class CartService implements ICartService{
 		.reduce(BigDecimal.ZERO,BigDecimal::add);
 		
 		return totalPrice;
+	}
+	
+	public Long initializeNewCart() {
+		Cart newCart = new Cart();
+		Long newCartId = cartIdGenerator.incrementAndGet();
+		newCart.setId(newCartId);
+		
+		return cartRepository.save(newCart).getId();
 	}
 
 }
