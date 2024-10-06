@@ -82,6 +82,8 @@ public class CartItemService implements ICartItemService{
 	@Override
 	public void removeItemQuantity(Long cartId, Long productId) {
 		// TODO Auto-generated method stub
+		logger.info("Inside removeItemQuantity ");
+		
 		CartDto cartDto = this.iCartService.getCart(cartId);
 		Cart cart = this.modelMapper.map(cartDto, Cart.class);
 		
@@ -99,6 +101,8 @@ public class CartItemService implements ICartItemService{
 	@Override
 	public void updateItemQuantity(Long cartId, Long productId, Long quantity) {
 		// TODO Auto-generated method stub
+		logger.info("Inside updateItemQuantity "); 
+		
 		CartDto cartDto = this.iCartService.getCart(cartId);
 		Cart cart = this.modelMapper.map(cartDto, Cart.class);
 		
