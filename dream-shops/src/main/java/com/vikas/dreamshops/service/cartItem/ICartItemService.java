@@ -1,9 +1,11 @@
 package com.vikas.dreamshops.service.cartItem;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.vikas.dreamshops.dtos.CartItemDto;
 
-import com.vikas.dreamshops.model.CartItem;
+public interface ICartItemService{
 
-public interface ICartItemService extends JpaRepository<CartItem, Long>{
-
+	void addCartItemToCart(Long cartId, Long productId,Long quantity);
+	void removeItemQuantity(Long cartId, Long productId);
+	void updateItemQuantity(Long cartId, Long productId, Long quantity);
+	
 }
